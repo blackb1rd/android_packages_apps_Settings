@@ -1958,7 +1958,7 @@
         </receiver>
 
         <!-- Anonymous Statistics -->
-        <receiver android:name=".cmstats.ReportingServiceManager"
+        <!--receiver android:name=".cmstats.ReportingServiceManager"
             android:enabled="true"
             android:exported="false"
             android:label="ReportingServiceManager">
@@ -1972,7 +1972,7 @@
             android:enabled="true"
             android:exported="false"
             android:name=".cmstats.ReportingService">
-        </service>
+        </service-->
 
 
         <!-- Watch for ContactsContract.Profile changes and update the user's photo.  -->
