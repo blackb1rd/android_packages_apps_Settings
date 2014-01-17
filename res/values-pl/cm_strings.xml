@@ -113,11 +113,6 @@
     <string name="toggle2g3g">2G/3G</string>
     <string name="toggleWimax">WiMAX</string>
     <string name="toggleNfc">NFC</string>
-<<<<<<< HEAD
-    <string name="link_volume_ringtones">Połącz głośność dzwonka i powiadomień</string>
-    <string name="link_volume_mutes">Tryb cichy wpływa na powiadomienia</string>
-    <string name="volume_keys_control_ring_stream">Przyciski głośności regulują głośność dzwonka</string>
-=======
     <string name="volume_ring_only_description">Dzwonek</string>
     <string name="link_volume_ringtones">Połącz głośność dzwonka i powiadomień</string>
     <string name="link_volume_mutes">Tryb cichy wpływa na powiadomienia</string>
