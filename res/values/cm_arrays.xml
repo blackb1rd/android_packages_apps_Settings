@@ -105,6 +105,18 @@
         <item>1800000</item>
     </string-array>
 
+    <string-array name="lockscreen_battery_status_entries" translatable="false">
+        <item>@string/lockscreen_battery_status_charging</item>
+        <item>@string/lockscreen_battery_status_alwayson</item>
+        <item>@string/lockscreen_battery_status_alwaysoff</item>
+    </string-array>
+
+    <string-array name="lockscreen_battery_status_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <string-array name="lockscreen_icon_picker_labels" translatable="false">
         <item>@string/icon_picker_alarm</item>
         <item>@string/icon_picker_browser</item>
@@ -155,6 +167,24 @@
         <item>ic_lockscreen_rss_normal</item>
         <item>ic_lockscreen_google_normal</item>
         <item>ic_lockscreen_twitter_normal</item>
+    </string-array>
+
+    <string-array name="lockscreen_long_key_press_entries" translatable="false">
+        <item>@string/lockscreen_buttons_no_action</item>
+        <item>@string/lockscreen_buttons_next</item>
+        <item>@string/lockscreen_buttons_previous</item>
+        <item>@string/lockscreen_buttons_playpause</item>
+        <item>@string/lockscreen_buttons_toggle_sound</item>
+        <item>@string/lockscreen_buttons_sleep</item>
+    </string-array>
+
+    <string-array name="lockscreen_long_key_press_values" translatable="false">
+        <item></item>
+        <item>NEXT</item>
+        <item>PREVIOUS</item>
+        <item>PLAYPAUSE</item>
+        <item>SOUND</item>
+        <item>SLEEP</item>
     </string-array>
 
     <!-- Profile mode options. -->
@@ -224,6 +254,36 @@
         <item>0</item>
         <item>1</item>
         <item>2</item>
+    </string-array>
+
+    <!-- Volume Overlay options. -->
+    <string-array name="volume_overlay_entries" translatable="false">
+        <item>@string/volume_overlay_single</item>
+        <item>@string/volume_overlay_expandable</item>
+        <item>@string/volume_overlay_expanded</item>
+        <item>@string/volume_overlay_none</item>
+    </string-array>
+
+    <!-- Values for Volume Overlay. Do not translate. -->
+    <string-array name="volume_overlay_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <!-- Ring mode options. -->
+    <string-array name="ring_mode_entries" translatable="false">
+        <item>@string/ring_mode_normal</item>
+        <item>@string/ring_mode_vibrate</item>
+        <item>@string/ring_mode_mute</item>
+    </string-array>
+
+    <!-- Values for Ring mode. Do not translate. -->
+    <string-array name="ring_mode_values" translatable="false">
+        <item>normal</item>
+        <item>vibrate</item>
+        <item>mute</item>
     </string-array>
 
     <!-- Values for the notification light pulse spinners -->
@@ -386,21 +446,6 @@
         <item>3</item>
     </string-array>
 
-    <!-- Performance settings -->
-    <string-array name="pref_zram_size_entries">
-        <item>Disabled</item>
-        <item>10%</item>
-        <item>18% (default)</item>
-        <item>26%</item>
-    </string-array>
-
-    <string-array name="pref_zram_size_values" translatable="false">
-        <item>0</item>
-        <item>10</item>
-        <item>18</item>
-        <item>26</item>
-    </string-array>
-
     <!--- Sms security limit -->
     <string-array name="sms_security_check_limit_entries" translatable="false">
         <item>@string/sms_security_check_limit_default</item>
@@ -424,6 +469,7 @@
         <item>@string/hardware_keys_action_search</item>
         <item>@string/hardware_keys_action_voice_search</item>
         <item>@string/hardware_keys_action_in_app_search</item>
+        <item>@string/hardware_keys_action_launch_camera</item>
     </string-array>
 
     <string-array name="hardware_keys_action_values" translatable="false">
@@ -433,6 +479,7 @@
         <item>3</item>
         <item>4</item>
         <item>5</item>
+        <item>6</item>
     </string-array>
 
     <!-- Volume key cursor control -->
@@ -465,6 +512,7 @@
         <item>@string/status_bar_style_icon_portrait</item>
         <item>@string/status_bar_style_icon_landscape</item>
         <item>@string/status_bar_style_circle</item>
+        <item>@string/status_bar_style_text</item>
         <item>@string/status_bar_style_hidden</item>
     </string-array>
 
@@ -472,6 +520,38 @@
         <item>0</item>
         <item>5</item>
         <item>2</item>
+        <item>6</item>
         <item>4</item>
+    </string-array>
+
+    <string-array name="entries_status_bar_signal" translatable="false">
+        <item>@string/status_bar_signal_style_icon</item>
+        <item>@string/status_bar_signal_style_text</item>
+        <item>@string/status_bar_style_hidden</item>
+    </string-array>
+
+    <string-array name="values_status_bar_signal" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <!-- Stylus Gestures -->
+    <string-array name="gestures_entries" translatable="false">
+        <item>@string/gestures_action_empty</item>
+        <item>@string/gestures_action_home</item>
+        <item>@string/gestures_action_back</item>
+        <item>@string/gestures_action_menu</item>
+        <item>@string/gestures_action_search</item>
+        <item>@string/gestures_action_recent</item>
+    </string-array>
+
+    <string-array name="gestures_values" translatable="false">
+        <item>1000</item>
+        <item>1001</item>
+        <item>1002</item>
+        <item>1003</item>
+        <item>1004</item>
+        <item>1005</item>
     </string-array>
 </resources>

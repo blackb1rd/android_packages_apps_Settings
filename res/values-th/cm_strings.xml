@@ -337,8 +337,6 @@
   <string name="io_sched_title">ตัวจัดการ อ่าน/เขียน ข้อมูล</string>
   <string name="perf_profile_title">โปรไฟล์</string>
   <string name="memory_management_title">จัดการหน่วยความจำ</string>
-  <string name="pref_zram_title">zRam</string>
-  <string name="pref_zram_summary">บีบอัดหน่วยความจำสำหรับเพิ่มพื้นที่หน่วยความจำจำลอง (ต้องการเริ่มระบบใหม่)</string>
   <string name="pref_ksm_title">Kernel samepage merging</string>
   <string name="pref_ksm_summary">KSM จะประหยัดความต้องการหน่วยความจำชั่วคราวและเพิ่มประสิทธิภาพ</string>
   <string name="pref_purgeable_assets_title">อนุญาตให้ล้าง Assets</string>
@@ -515,7 +513,6 @@
   <string name="power_menu_user_title">สลับผู้ใช้</string>
   <string name="power_menu_sound_title">แผงเสียง</string>
   <string name="button_settings">ปุ่ม</string>
-  <string name="hardware_keys_enable_custom_title">อนุญาตใช้ปุ่มกำหนดเอง</string>
   <string name="hardware_keys_home_key_title">ปุ่มโฮม</string>
   <string name="hardware_keys_menu_key_title">ปุ่มเมนู</string>
   <string name="hardware_keys_assist_key_title">ปุ่มค้นหา</string>
