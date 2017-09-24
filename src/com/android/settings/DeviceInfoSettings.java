@@ -19,6 +19,8 @@ package com.android.settings;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,12 +31,20 @@ import android.os.UserHandle;
 import android.preference.Preference;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
+import android.telephony.MSimTelephonyManager;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.android.settings.deviceinfo.msim.MSimStatus;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,6 +59,7 @@ public class DeviceInfoSettings extends RestrictedSettingsFragment {
 
     private static final String KEY_CONTAINER = "container";
     private static final String KEY_TEAM = "team";
+    private static final String KEY_CHANGELOG = "changelog";
     private static final String KEY_CONTRIBUTORS = "contributors";
     private static final String KEY_REGULATORY_INFO = "regulatory_info";
     private static final String KEY_TERMS = "terms";
@@ -63,6 +74,7 @@ public class DeviceInfoSettings extends RestrictedSettingsFragment {
     private static final String KEY_SELINUX_STATUS = "selinux_status";
     private static final String KEY_BASEBAND_VERSION = "baseband_version";
     private static final String KEY_FIRMWARE_VERSION = "firmware_version";
+    private static final String KEY_SECURITY_PATCH = "security_patch";
     private static final String KEY_UPDATE_SETTING = "additional_system_update_settings";
     private static final String KEY_EQUIPMENT_ID = "fcc_equipment_id";
     private static final String PROPERTY_EQUIPMENT_ID = "ro.ril.fccid";
@@ -71,6 +83,7 @@ public class DeviceInfoSettings extends RestrictedSettingsFragment {
     private static final String KEY_DEVICE_CPU = "device_cpu";
     private static final String KEY_DEVICE_MEMORY = "device_memory";
     private static final String KEY_CM_UPDATES = "cm_updates";
+    private static final String KEY_STATUS = "status_info";
 
     static final int TAPS_TO_BE_A_DEVELOPER = 7;
     long[] mHits = new long[3];
@@ -93,6 +106,21 @@ public class DeviceInfoSettings extends RestrictedSettingsFragment {
 
         setStringSummary(KEY_FIRMWARE_VERSION, Build.VERSION.RELEASE);
         findPreference(KEY_FIRMWARE_VERSION).setEnabled(true);
+        String patch = Build.VERSION.SECURITY_PATCH;
+        if (!"".equals(patch)) {
+            try {
+                SimpleDateFormat template = new SimpleDateFormat("yyyy-MM-dd");
+                Date patchDate = template.parse(patch);
+                String format = DateFormat.getBestDateTimePattern(Locale.getDefault(), "dMMMMyyyy");
+                patch = DateFormat.format(format, patchDate).toString();
+            } catch (ParseException e) {
+                // broken parse; fall through and use the raw string
+            }
+            setStringSummary(KEY_SECURITY_PATCH, patch);
+        } else {
+            getPreferenceScreen().removePreference(findPreference(KEY_SECURITY_PATCH));
+
+        }
         setValueSummary(KEY_BASEBAND_VERSION, "gsm.version.baseband");
         setStringSummary(KEY_DEVICE_MODEL, Build.MODEL + getMsvSuffix());
         setValueSummary(KEY_EQUIPMENT_ID, PROPERTY_EQUIPMENT_ID);
@@ -112,11 +140,16 @@ public class DeviceInfoSettings extends RestrictedSettingsFragment {
             setStringSummary(KEY_SELINUX_STATUS, status);
         }
 
+        if (MSimTelephonyManager.getDefault().isMultiSimEnabled()) {
+            findPreference(KEY_STATUS).getIntent().setClassName(
+                    getActivity().getPackageName(), MSimStatus.class.getName());
+        }
+
         // Remove selinux information if property is not present
         removePreferenceIfPropertyMissing(getPreferenceScreen(), KEY_SELINUX_STATUS,
                 PROPERTY_SELINUX_STATUS);
 
-        String cpuInfo = getCPUInfo();
+        final String cpuInfo = getCPUInfo();
         String memInfo = getMemInfo();
 
         // Only the owner should see the Updater settings, if it exists
@@ -180,6 +213,10 @@ public class DeviceInfoSettings extends RestrictedSettingsFragment {
             // Remove for secondary users
             removePreference(KEY_SYSTEM_UPDATE_SETTINGS);
         }
+        if ("user".equals(Build.TYPE)) {
+            removePreference(KEY_CHANGELOG);
+        }
+
         Utils.updatePreferenceToSpecificActivityOrRemove(act, parentPreference, KEY_CONTRIBUTORS,
                 Utils.UPDATE_PREFERENCE_FLAG_SET_TITLE_TO_MATCHING_ACTIVITY);
 
@@ -234,7 +271,7 @@ public class DeviceInfoSettings extends RestrictedSettingsFragment {
                     if (mDevHitToast != null) {
                         mDevHitToast.cancel();
                     }
-                    mDevHitToast = Toast.makeText(getActivity(), R.string.show_dev_on,
+                    mDevHitToast = Toast.makeText(getActivity(), R.string.show_dev_on_cm,
                             Toast.LENGTH_LONG);
                     mDevHitToast.show();
                 } else if (mDevHitCountdown > 0
@@ -243,7 +280,7 @@ public class DeviceInfoSettings extends RestrictedSettingsFragment {
                         mDevHitToast.cancel();
                     }
                     mDevHitToast = Toast.makeText(getActivity(), getResources().getQuantityString(
-                            R.plurals.show_dev_countdown, mDevHitCountdown, mDevHitCountdown),
+                            R.plurals.show_dev_countdown_cm, mDevHitCountdown, mDevHitCountdown),
                             Toast.LENGTH_SHORT);
                     mDevHitToast.show();
                 }
@@ -251,9 +288,23 @@ public class DeviceInfoSettings extends RestrictedSettingsFragment {
                 if (mDevHitToast != null) {
                     mDevHitToast.cancel();
                 }
-                mDevHitToast = Toast.makeText(getActivity(), R.string.show_dev_already,
+                mDevHitToast = Toast.makeText(getActivity(), R.string.show_dev_already_cm,
                         Toast.LENGTH_LONG);
                 mDevHitToast.show();
+            }
+        } else if (preference.getKey().equals(KEY_MOD_VERSION)) {
+            System.arraycopy(mHits, 1, mHits, 0, mHits.length-1);
+            mHits[mHits.length-1] = SystemClock.uptimeMillis();
+            if (mHits[0] >= (SystemClock.uptimeMillis()-500)) {
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.putExtra("is_cm", true);
+                intent.setClassName("android",
+                        com.android.internal.app.PlatLogoActivity.class.getName());
+                try {
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "Unable to start activity " + intent.toString());
+                }
             }
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
@@ -402,16 +453,38 @@ public class DeviceInfoSettings extends RestrictedSettingsFragment {
 
     private String getCPUInfo() {
         String result = null;
+        int coreCount = 0;
 
         try {
             /* The expected /proc/cpuinfo output is as follows:
              * Processor	: ARMv7 Processor rev 2 (v7l)
              * BogoMIPS	: 272.62
+             *
+             * On kernel 3.10 this changed, it is now the last
+             * line. So let's read the whole thing, search
+             * specifically for "Processor", and retain the old
+             * "first line" as fallback.
+             * Also, use "processor : <id>" to count cores
              */
-            String firstLine = readLine(FILENAME_PROC_CPUINFO);
-            if (firstLine != null) {
+            BufferedReader ci = new BufferedReader(new FileReader(FILENAME_PROC_CPUINFO));
+            String firstLine = ci.readLine();
+            String latestLine = firstLine;
+            while (latestLine != null) {
+                if (latestLine.startsWith("Processor"))
+                  result = latestLine.split(":")[1].trim();
+                if (latestLine.startsWith("processor"))
+                  coreCount++;
+                latestLine = ci.readLine();
+            }
+            if (result == null && firstLine != null) {
                 result = firstLine.split(":")[1].trim();
             }
+            /* Don't do this. hotplug throws off the count
+            if (coreCount > 1) {
+                result = result + " (x" + coreCount + ")";
+            }
+            */
+            ci.close();
         } catch (IOException e) {}
 
         return result;
@@ -425,7 +498,13 @@ public class DeviceInfoSettings extends RestrictedSettingsFragment {
         String packageName=matcher.find()?matcher.group(1):null;
         if(packageName != null) {
             try {
-                getPackageManager().getPackageInfo(packageName, 0);
+                PackageInfo pi = getPackageManager().getPackageInfo(packageName,
+                        PackageManager.GET_ACTIVITIES);
+                if (!pi.applicationInfo.enabled) {
+                    Log.e(LOG_TAG,"package "+packageName+" is disabled, hiding preference.");
+                    getPreferenceScreen().removePreference(preference);
+                    return true;
+                }
             } catch (NameNotFoundException e) {
                 Log.e(LOG_TAG,"package "+packageName+" not installed, hiding preference.");
                 getPreferenceScreen().removePreference(preference);
